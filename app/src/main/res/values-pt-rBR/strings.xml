@@ -4,23 +4,27 @@
     <string name="load_error">Não foi possível atualizar as últimas notícias</string>
     <string name="retry">Tentar novamente</string>
     <string name="home_popular_section_title">Popular no Jetnews</string>
-    <string name="home_post_min_read">%1$s - %2$d minuto(s) de leitura</string>
-    <string name="home_post_min_read2">minutos de leitura</string>
-    <string name="cd_navigate_up">Voltar para a lista de artigos</string>
+    <string name="home_post_min_read">%1$s - %2$d min de leitura</string>
+    <string name="home_post_min_read2">min de leitura</string>
+    <string name="cd_navigate_up">Navegar para cima</string>
     <string name="cd_add_to_favorites">Adicionar aos favoritos</string>
     <string name="cd_share">Compartilhar</string>
     <string name="cd_text_settings">Configurações de texto</string>
     <string name="cd_open_navigation_drawer">Abrir menu de navegação</string>
-    <string name="cd_show_fewer">Mostre menos artigos desse tipo</string>
-    <string name="cd_bookmark">Salvar nos favoritos</string>
-    <string name="unbookmark">Remover dos favoritos</string>
-    <string name="bookmark">Salvar nos favoritos</string>
-    <string name="fewer_stories">Mostrar menos histórias como esta?</string>
-    <string name="fewer_stories_content">Este recurso ainda não foi implementado</string>
-    <string name="agree">CONCORDO</string>
-    <string name="action_read_article">Ler artigo</string>
-    <string name="state_not_subscribed">Não está inscrito</string>
-    <string name="state_subscribed">Está inscrito</string>
+    <string name="cd_show_fewer">Mostrar menos assim</string>
+    <string name="cd_bookmark">Marcar</string>
+    <string name="unbookmark">desmarcar</string>
+    <string name="bookmark">marcar</string>
+    <string name="fewer_stories">Mostrar menos histórias assim?</string>
+    <string name="fewer_stories_content">Esta funcionalidade ainda não foi implementada</string>
+    <string name="agree">CONCORDAR</string>
+    <string name="action_read_article">ler artigo</string>
+    <string name="state_not_subscribed">não inscrito</string>
+    <string name="state_subscribed">inscrito</string>
 
-
+    <!-- Acessibilidade -->
+    <string name="cd_show_fewer_for">Mostrar menos artigos como %1$s</string>
+    <string name="cd_jetnews_logo">Logo do JetNews</string>
+    <string name="cd_topic_subscribed">%1$s em %2$s: inscrito. </string>
+    <string name="cd_topic_not_subscribed">%1$s em %2$s: não inscrito. </string>
 </resources>

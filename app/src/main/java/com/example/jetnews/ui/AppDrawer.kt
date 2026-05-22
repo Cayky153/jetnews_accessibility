@@ -18,7 +18,6 @@ package com.example.jetnews.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetnews.R
@@ -68,7 +68,6 @@ fun AppDrawer(
                 closeDrawer()
             }
         )
-
         DrawerButton(
             icon = Icons.Filled.ListAlt,
             label = "Interests",
@@ -84,9 +83,12 @@ fun AppDrawer(
 @Composable
 private fun JetNewsLogo(modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
+        // CORRIGIDO: logo e wordmark tinham contentDescription = null.
+        // O logo agora tem descrição para identificação pelo TalkBack.
+        // O wordmark continua null pois o logo já descreve o elemento.
         Image(
             painter = painterResource(R.drawable.ic_jetnews_logo),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.cd_jetnews_logo),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
         )
         Spacer(Modifier.width(8.dp))
@@ -107,11 +109,7 @@ private fun DrawerButton(
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
-    val imageAlpha = if (isSelected) {
-        1f
-    } else {
-        0.6f
-    }
+    val imageAlpha = if (isSelected) 1f else 0.6f
     val textIconColor = if (isSelected) {
         colors.primary
     } else {

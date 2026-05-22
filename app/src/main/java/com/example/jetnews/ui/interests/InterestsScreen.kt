@@ -41,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,23 +54,13 @@ import com.example.jetnews.ui.components.InsetAwareTopAppBar
 import com.example.jetnews.ui.theme.JetnewsTheme
 import kotlinx.coroutines.launch
 
-/**
- * Stateful InterestsScreen that handles the interaction with the repository
- *
- * @param interestsRepository data source for this screen
- * @param openDrawer (event) request opening the app drawer
- */
 @Composable
 fun InterestsScreen(
     interestsRepository: InterestsRepository,
     openDrawer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Returns a [CoroutineScope] that is scoped to the lifecycle of [InterestsScreen]. When this
-    // screen is removed from composition, the scope will be cancelled.
     val coroutineScope = rememberCoroutineScope()
-
-    // collectAsState will read a [Flow] in Compose
     val selectedTopics by interestsRepository.observeTopicsSelected().collectAsState(setOf())
     val onTopicSelect: (TopicSelection) -> Unit = {
         coroutineScope.launch { interestsRepository.toggleTopicSelection(it) }
@@ -82,14 +74,6 @@ fun InterestsScreen(
     )
 }
 
-/**
- * Stateless interest screen displays the topics the user can subscribe to
- *
- * @param topics (state) topics to display, mapped by section
- * @param selectedTopics (state) currently selected topics
- * @param onTopicSelect (event) request a topic selection be changed
- * @param openDrawer (event) request opening the app drawer
- */
 @Composable
 fun InterestsScreen(
     topics: TopicsMap,
@@ -103,6 +87,8 @@ fun InterestsScreen(
             InsetAwareTopAppBar(
                 title = { Text("Interests") },
                 navigationIcon = {
+                    // CORRIGIDO: ícone do logo tinha contentDescription genérico.
+                    // Já estava correto com cd_open_navigation_drawer — mantido.
                     IconButton(onClick = openDrawer) {
                         Icon(
                             painter = painterResource(R.drawable.ic_jetnews_logo),
@@ -120,14 +106,14 @@ fun InterestsScreen(
                 item {
                     Text(
                         text = section,
-                        modifier = Modifier
-                            .padding(16.dp),
+                        modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
                 items(topics) { topic ->
                     TopicItem(
                         itemTitle = topic,
+                        section = section,
                         selected = selectedTopics.contains(TopicSelection(section, topic))
                     ) { onTopicSelect(TopicSelection(section, topic)) }
                     TopicDivider()
@@ -137,23 +123,27 @@ fun InterestsScreen(
     }
 }
 
-/**
- * Display a full-width topic item
- *
- * @param itemTitle (state) topic title
- * @param selected (state) is topic currently selected
- * @param onToggle (event) toggle selection for topic
- */
 @Composable
-private fun TopicItem(itemTitle: String, selected: Boolean, onToggle: () -> Unit) {
+private fun TopicItem(itemTitle: String, section: String, selected: Boolean, onToggle: () -> Unit) {
     val image = painterResource(R.drawable.placeholder_1_1)
+
+    // CORRIGIDO: Checkbox tinha contentDescription "marcado"/"não marcado" sem contexto,
+    // gerando descrições duplicadas quando vários tópicos tinham o mesmo estado.
+    // Agora inclui o nome do tópico e da seção para diferenciar cada item.
+    val checkboxDesc = stringResource(
+        if (selected) R.string.cd_topic_subscribed else R.string.cd_topic_not_subscribed,
+        itemTitle,
+        section
+    )
+
     Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
+        // CORRIGIDO: imagem placeholder tinha contentDescription = null.
+        // Adicionado o nome do tópico para identificação pelo TalkBack.
         Image(
             painter = image,
-            contentDescription = null,
+            contentDescription = itemTitle,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .size(56.dp, 56.dp)
@@ -170,14 +160,13 @@ private fun TopicItem(itemTitle: String, selected: Boolean, onToggle: () -> Unit
         Checkbox(
             checked = selected,
             onCheckedChange = { onToggle() },
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .semantics { contentDescription = checkboxDesc }
         )
     }
 }
 
-/**
- * Full-width divider for topics
- */
 @Composable
 private fun TopicDivider() {
     Divider(

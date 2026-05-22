@@ -19,6 +19,7 @@ package com.example.jetnews.ui.home
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,18 +36,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,9 +65,11 @@ fun PostCardHistory(post: Post, navigateToArticle: (String) -> Unit) {
     Row(
         Modifier.clickable { navigateToArticle(post.id) }
     ) {
+        // CORRIGIDO: imagem do artigo tinha contentDescription = null.
+        // Adicionado o título do post para que o TalkBack identifique a imagem corretamente.
         Image(
             painter = painterResource(post.imageThumbId),
-            contentDescription = null,
+            contentDescription = post.title,
             modifier = Modifier
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                 .size(40.dp, 40.dp)
@@ -84,20 +89,31 @@ fun PostCardHistory(post: Post, navigateToArticle: (String) -> Unit) {
                         style = textStyle
                     )
                     Text(
-                        text = " - ${post.metadata.readTimeMinutes} "+ stringResource(R.string.home_post_min_read2) ,
+                        text = " - ${post.metadata.readTimeMinutes} " + stringResource(R.string.home_post_min_read2),
                         style = textStyle
                     )
                 }
             }
         }
+        // CORRIGIDO: ícone Close tinha área de toque de 24dp (abaixo do mínimo de 48dp)
+        // e contentDescription genérico sem mencionar o artigo.
+        // Agora usa Box com 48dp para garantir área de toque adequada,
+        // e contentDescription inclui o título do post para diferenciar os botões.
+        val showFewerDesc = stringResource(R.string.cd_show_fewer_for, post.title)
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(R.string.cd_show_fewer),
+            Box(
                 modifier = Modifier
+                    .size(48.dp)
                     .clickable { openDialog = true }
-                    .size(24.dp)
-            )
+                    .semantics { contentDescription = showFewerDesc },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null, // descrição já está no Box pai
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
     if (openDialog) {
@@ -144,10 +160,11 @@ fun PostCardPopular(
         elevation = CardDefaults.elevatedCardElevation()
     ) {
         Column {
-
+            // CORRIGIDO: imagem decorativa do card popular tinha contentDescription = null.
+            // Adicionado o título do post para identificação pelo TalkBack.
             Image(
                 painter = painterResource(post.imageId),
-                contentDescription = null, // decorative
+                contentDescription = post.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(100.dp)
@@ -167,7 +184,6 @@ fun PostCardPopular(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium
                 )
-
                 Text(
                     text = stringResource(
                         id = R.string.home_post_min_read,
