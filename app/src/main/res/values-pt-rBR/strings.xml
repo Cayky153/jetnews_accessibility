@@ -21,6 +21,8 @@
     <string name="action_read_article">ler artigo</string>
     <string name="state_not_subscribed">não inscrito</string>
     <string name="state_subscribed">inscrito</string>
+    <string name="cd_post_card_history">%1$s, por %2$s, %3$s, %4$d min de leitura.</string>
+    <string name="cd_post_card_popular">%1$s, por %2$s, %3$s, %4$d min de leitura.</string>
 
     <!-- Acessibilidade -->
     <string name="cd_show_fewer_for">Mostrar menos artigos como %1$s</string>

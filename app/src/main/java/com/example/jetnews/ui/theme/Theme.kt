@@ -23,20 +23,22 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// CORRIGIDO: surface era Red700 (#DD0D3C) no modo claro, causando baixo contraste
-// de texto sobre esse fundo (#DD0D3C sobre #F4D7E3 = 3.73, abaixo do mínimo 4.50).
-// Surface agora usa branco para garantir contraste adequado do conteúdo.
-// onSurfaceVariant usa cinza escuro (#49454F → contraste ~5.9 sobre branco) ✓
 private val LightThemeColors = lightColorScheme(
     primary = Red700,
     primaryContainer = Red900,
-    surface = Color.White,                  // CORRIGIDO: era Red700
-    onSurface = Color(0xFF1C1B1F),          // preto suave, contraste ~16:1 sobre branco ✓
-    onSurfaceVariant = Color(0xFF49454F),   // CORRIGIDO: contraste ~5.9 sobre branco ✓
+
+    surface = Red700,
+    onSurface = Color(0xFF1C1B1F),
+
+    // RESTAURADO
+    onSurfaceVariant = Color(0xFF49454F),
+
     onPrimary = Color.White,
+
     secondary = Red700,
     secondaryContainer = Red900,
     onSecondary = Color.White,
+
     error = Red800
 )
 
@@ -45,7 +47,7 @@ private val DarkThemeColors = darkColorScheme(
     primaryContainer = Red700,
     surface = DarkGray200,
     onSurface = Color(0xFFE6E1E5),          // claro sobre fundo escuro ✓
-    onSurfaceVariant = Color(0xFFCAC4D0),   // CORRIGIDO: contraste adequado sobre DarkGray200 ✓
+    onSurfaceVariant = Color(0xFFCAC4D0),   // contraste adequado sobre DarkGray200 ✓
     onPrimary = Color.White,
     secondary = Red300,
     onSecondary = Color.Black,

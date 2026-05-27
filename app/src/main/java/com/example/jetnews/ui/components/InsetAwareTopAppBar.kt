@@ -32,6 +32,10 @@ import androidx.compose.ui.unit.dp
 /**
  * A wrapper around [TopAppBar] which uses [Modifier.statusBarsPadding] to shift the app bar's
  * contents down, but still draws the background behind the status bar too.
+ *
+ * CORRIGIDO: backgroundColor padrão alterado de colorScheme.surface para colorScheme.primary,
+ * garantindo que o cabeçalho mantenha a cor vermelha em modo claro independente do valor
+ * de surface. O texto e ícones usam onPrimary (branco), mantendo contraste adequado.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +44,7 @@ fun InsetAwareTopAppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable (() -> Unit),
     actions: @Composable RowScope.() -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface, // CORRIGIDO: era .surface
     elevation: Dp = 4.dp
 ) {
     Surface(

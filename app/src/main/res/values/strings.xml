@@ -30,6 +30,8 @@
 
     <string name="cd_jetnews_logo">JetNews logo</string>
 
+    <string name="cd_post_card_history">%1$s, por %2$s, %3$s, %4$d min of reading.</string>
+    <string name="cd_post_card_popular">%1$s, por %2$s, %3$s, %4$d min of reading.</string>
 
     <string name="cd_topic_subscribed">%1$s in %2$s: subscribed. Tap to unsubscribe.</string>
     <string name="cd_topic_not_subscribed">%1$s in %2$s: not subscribed. Tap to subscribe.</string>

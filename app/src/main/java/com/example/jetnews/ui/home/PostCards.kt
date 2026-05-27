@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,18 +63,35 @@ import com.example.jetnews.ui.theme.JetnewsTheme
 @Composable
 fun PostCardHistory(post: Post, navigateToArticle: (String) -> Unit) {
     var openDialog by remember { mutableStateOf(false) }
+
+    // CORRIGIDO: texto oculto nos cards de histórico.
+    // O TalkBack não conseguia ler corretamente partes do título e da data
+    // pois estavam fragmentadas em múltiplos nós de texto dentro do Row.
+    // clearAndSetSemantics no Row agrupa título, autor, tempo de leitura e data
+    // em uma única descrição legível pelo TalkBack.
+    val cardDescription = stringResource(
+        R.string.cd_post_card_history,
+        post.title,
+        post.metadata.author.name,
+        post.metadata.date,
+        post.metadata.readTimeMinutes
+    )
+
     Row(
-        Modifier.clickable { navigateToArticle(post.id) }
+        Modifier
+            .clickable { navigateToArticle(post.id) }
+            .semantics(mergeDescendants = true) {
+                contentDescription = cardDescription
+            }
     ) {
-        // CORRIGIDO: imagem do artigo tinha contentDescription = null.
-        // Adicionado o título do post para que o TalkBack identifique a imagem corretamente.
         Image(
             painter = painterResource(post.imageThumbId),
-            contentDescription = post.title,
+            contentDescription = "",
             modifier = Modifier
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                 .size(40.dp, 40.dp)
                 .clip(MaterialTheme.shapes.small)
+                .clearAndSetSemantics { }
         )
         Column(
             Modifier
@@ -95,22 +113,18 @@ fun PostCardHistory(post: Post, navigateToArticle: (String) -> Unit) {
                 }
             }
         }
-        // CORRIGIDO: ícone Close tinha área de toque de 24dp (abaixo do mínimo de 48dp)
-        // e contentDescription genérico sem mencionar o artigo.
-        // Agora usa Box com 48dp para garantir área de toque adequada,
-        // e contentDescription inclui o título do post para diferenciar os botões.
         val showFewerDesc = stringResource(R.string.cd_show_fewer_for, post.title)
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clickable { openDialog = true }
-                    .semantics { contentDescription = showFewerDesc },
+                    .clearAndSetSemantics { contentDescription = showFewerDesc },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = null, // descrição já está no Box pai
+                    contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -152,31 +166,42 @@ fun PostCardPopular(
     navigateToArticle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // CORRIGIDO: texto oculto no card popular (título e data fragmentados).
+    // semantics com mergeDescendants agrupa todos os textos internos em
+    // um único nó acessível, evitando que o TalkBack leia partes truncadas.
+    val cardDescription = stringResource(
+        R.string.cd_post_card_popular,
+        post.title,
+        post.metadata.author.name,
+        post.metadata.date,
+        post.metadata.readTimeMinutes
+    )
+
     Card(
         colors = CardDefaults.cardColors(),
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.size(280.dp, 240.dp),
+        modifier = modifier
+            .size(280.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = cardDescription
+            },
         onClick = { navigateToArticle(post.id) },
         elevation = CardDefaults.elevatedCardElevation()
     ) {
         Column {
-            // CORRIGIDO: imagem decorativa do card popular tinha contentDescription = null.
-            // Adicionado o título do post para identificação pelo TalkBack.
             Image(
                 painter = painterResource(post.imageId),
-                contentDescription = post.title,
+                contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth()
+                    .clearAndSetSemantics { }
             )
-
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = post.title,
                     style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = post.metadata.author.name,
